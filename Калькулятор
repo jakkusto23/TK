@@ -1,0 +1,110 @@
+import java.util.*;
+
+class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите математическое выражение:");
+        String input = scanner.nextLine();
+        try {
+            String result = calc(input);
+            System.out.println("Ответ: " + result);
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+    public static String calc(String input) throws Exception {
+        String[] elements = input.split(" ");
+        if (elements.length != 3) {
+            throw new Exception("Некорректный формат выражения");
+        }
+
+        int a, b;
+        try {
+            a = Integer.parseInt(elements[0]);
+            b = Integer.parseInt(elements[2]);
+        } catch (NumberFormatException e) {
+            if (!isRoman(elements[0]) || !isRoman(elements[2])) {
+                throw new Exception("Используются одновременно разные системы счисления");
+            }
+            a = toArabic(elements[0]);
+            b = toArabic(elements[2]);
+        }
+
+        if (a < 1 || a > 10 || b < 1 || b > 10) {
+            throw new Exception("Числа должны быть в диапазоне от 1 до 10 включительно");
+        }
+
+        String result;
+        switch (elements[1]) {
+            case "+":
+                result = Integer.toString(a + b);
+                break;
+            case "-":
+                result = Integer.toString(a - b);
+                break;
+            case "*":
+                result = Integer.toString(a * b);
+                break;
+            case "/":
+                result = Integer.toString(a / b);
+                break;
+            default:
+                throw new Exception("Некорректный оператор");
+        }
+
+        if (isRoman(elements[0]) && isRoman(elements[2])) {
+            result = toRoman(Integer.parseInt(result));
+        }
+
+        return result;
+    }
+
+    private static boolean isRoman(String s) {
+        return s.equals("I") || s.equals("II") || s.equals("III") || s.equals("IV")
+                || s.equals("V") || s.equals("VI") || s.equals("VII") || s.equals("VIII") || s.equals("IX") || s.equals("X");
+    }
+
+    private static int toArabic(String s) {
+        switch (s) {
+            case "I":
+                return 1;
+            case "II":
+                return 2;
+            case "III":
+                return 3;
+            case "IV":
+                return 4;
+            case "V":
+                return 5;
+            case "VI":
+                return 6;
+            case "VII":
+                return 7;
+            case "VIII":
+                return 8;
+            case "IX":
+                return 9;
+            case "X":
+                return 10;
+            default:
+                return -1;
+        }
+    }
+
+    private static String toRoman(int n) {
+        if (n < 1 || n > 3999) {
+            throw new IllegalArgumentException("Число должно быть в диапазоне от 1 до 3999 включительно");
+        }
+
+        String[] romanNumerals = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < romanNumerals.length; i++) {
+            while (n >= values[i]) {
+                result.append(romanNumerals[i]);
+                n -= values[i];
+            }
+        }
+        return result.toString();
+
+    }}
